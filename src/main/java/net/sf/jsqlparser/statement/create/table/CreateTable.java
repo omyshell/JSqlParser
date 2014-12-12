@@ -37,6 +37,7 @@ public class CreateTable implements Statement {
 
     private Table table;
     private boolean unlogged = false;
+    private List<String> createOptionsStrings;
     private List<String> tableOptionsStrings;
     private List<ColumnDefinition> columnDefinitions;
     private List<Index> indexes;
@@ -89,6 +90,16 @@ public class CreateTable implements Statement {
         tableOptionsStrings = list;
     }
 
+    public List<String> getCreateOptionsStrings() {
+        return createOptionsStrings;
+    }
+
+    public void setCreateOptionsStrings(List<String> createOptionsStrings) {
+        this.createOptionsStrings = createOptionsStrings;
+    }
+    
+    
+
     /**
      * A list of {@link Index}es (for example "PRIMARY KEY") of this table.<br>
      * Indexes created with column definitions (as in mycol INT PRIMARY KEY) are
@@ -113,8 +124,11 @@ public class CreateTable implements Statement {
     @Override
     public String toString() {
         String sql = "";
+        String createOps = PlainSelect.getStringList(createOptionsStrings, false, false);
 
-        sql = "CREATE " + (unlogged ? "UNLOGGED " : "") + "TABLE " + table;
+        sql = "CREATE " + (unlogged ? "UNLOGGED " : "") + 
+                (!"".equals(createOps)?createOps + " ":"") +
+                "TABLE " + table;
 
         if (select != null) {
             sql += " AS " + select.toString();
